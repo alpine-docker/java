@@ -42,6 +42,7 @@ jobs:
     environment:
       APPLICATIONS: java
     steps:
+      - checkout
       - attach_workspace:
           at: containers
       - run: |

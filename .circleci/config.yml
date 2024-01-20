@@ -7,7 +7,6 @@ version: 2.1
 # API_TOKEN
 
 # REBUILD - it has default value "false", if need rebuild the image, turn it on with value "true"
-
 parameters:
   rebuild:
     type: string
@@ -27,11 +26,15 @@ jobs:
       - run: |
           apk --no-cache --update add bash curl jq uuidgen git
           echo $REBUILD
-          # build the application with latest tag
+          # build the application with the latest tag
           for app in ${APPLICATIONS}
           do
             bash -x ./build.sh ${app}
           done
+      - persist_to_workspace:
+          root: $CIRCLE_WORKING_DIRECTORY
+          paths:
+            - containers/tags.list
 
   scan:
     docker:
@@ -39,13 +42,19 @@ jobs:
     environment:
       APPLICATIONS: java
     steps:
-      - checkout
+      - attach_workspace:
+          at: $CIRCLE_WORKING_DIRECTORY
       - run: |
+          cat containers/tags.list
+
           for app in ${APPLICATIONS}
           do
-            echo "Scan image alpine/${app} ..."
-            trivy image -s "HIGH,CRITICAL" alpine/${app}
-            echo "==== End of Scan ===="
+            while read tag
+            do
+              echo "Scan image alpine/${app}:${tag} ..."
+              trivy image -s "HIGH,CRITICAL" alpine/${app}
+              echo "==== End of Scan ===="
+            done < containers/tags.list
           done
 
 workflows:

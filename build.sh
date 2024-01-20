@@ -92,6 +92,7 @@ for folder in "${alpine_folders[@]}"; do
     build_docker_image "${tag}" "${runtime}" "${image}" "${platform}" "${dockerfile_name}"
 
     popd
+    echo "${tag}" >> tags.list
   fi
 done
 

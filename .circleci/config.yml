@@ -32,9 +32,9 @@ jobs:
             bash -x ./build.sh ${app}
           done
       - persist_to_workspace:
-          root: $CIRCLE_WORKING_DIRECTORY
+          root: containers
           paths:
-            - containers/tags.list
+            - tags.list
 
   scan:
     docker:
@@ -43,7 +43,7 @@ jobs:
       APPLICATIONS: java
     steps:
       - attach_workspace:
-          at: $CIRCLE_WORKING_DIRECTORY
+          at: containers
       - run: |
           cat containers/tags.list
 

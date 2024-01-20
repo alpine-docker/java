@@ -25,7 +25,6 @@ build_docker_image() {
   local dockerfile_name="$5"
 
   short_tag="${tag%%.*}"
-  echo "${short_tag}" >> tags
 
   if [ "$runtime" == "jdk" ]; then
       runtime_option="--tag ${image_name}:${short_tag}"
@@ -93,6 +92,10 @@ for folder in "${alpine_folders[@]}"; do
     build_docker_image "${tag}" "${runtime}" "${image}" "${platform}" "${dockerfile_name}"
 
     popd
+
+    short_tag="${tag%%.*}"
+    echo "${short_tag}" >> tags
+
   fi
 done
 
